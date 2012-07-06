@@ -1,0 +1,332 @@
+<h1>Tech Spec</h1>
+
+<h2>Table of Contents</h2>
+
+<ul>
+<li><p><a href="#Introduction">Introduction</a></p></li>
+<li><p><a href="#PopperResearcher">popper-researcher</a></p>
+
+<ul><li><p><a href="#AuthenticationAndPermissions">Authentication and Permissions</a></p></li>
+<li><p><a href="#GitAndGithubIntegration">Git and Github Integration</a></p></li>
+<li><p><a href="#ExperimentCreation">Experiment Creation</a></p></li></ul></li>
+<li><p><a href="#PopperDeploy">popper-deploy</a></p></li>
+<li><p><a href="#PopperWindowsDeploy">popper-windows-deploy</a>    </p></li>
+</ul>
+
+<h2><a name="Introduction" id="anchor4">Introduction</a></h2>
+
+<p>Following are the tech specs for <strong>Popper</strong>.  Included is a description of the development process, style guidelines for contributing to the <strong>Popper</strong> source, and documentation for all features included in the current <strong>Popper</strong> release.</p>
+
+<h3>Development Process</h3>
+
+<p>The development process extends from brainstorming a feature to closing bug tickets for that feature.  The development process is designed for sharing information between developers and non-developers, and for creating a comprehensive log of the development of a feature.  </p>
+
+<p>It's extremely important to follow a rigorous development process in order to reduce the amount of time that's spent redeveloping features because of miscommunication between the developer and project manager, or readdressing bugs that were never fully fixed, etc.  The development process is defined as the interaction between a <strong>Developer</strong> and a <strong>Project Manager</strong>.  </p>
+
+<p>It's important, even as <strong>Popper</strong> grows, to maintain a single line of communication between the development team and the <strong>Project Manager</strong>, who's in charge of communicating functional specs and aggregating information from many different sources, including: other non-developers, clients and advisors.</p>
+
+<h4>Process</h4>
+
+<ol>
+<li>A feature is brainstormed, either by a developer or a non-developer.  </li>
+<li>Feature creator clones and branches the popper-feature repository and commits all notes, drawings or other informal documents to a new folder. </li>
+<li>Feature creator writes a <a href="http://www.mojofat.com/tutorial/">functional spec</a> and commits it to the repository branch.</li>
+<li>Feature creator hands off the spec to the <strong>Project Manager</strong>, who adds it to the Product Backlog.</li>
+<li><strong>Project Manager</strong> assigns the feature to a developer(s).  <strong>Developer</strong> should only be assigned one feature at a time. </li>
+<li><strong>Developer</strong> pulls from the popper-feature repository and checks out the associated feature branch.</li>
+<li><strong>Developer</strong> writes a tech spec, including a time estimate, and commits it to the feature branch.</li>
+<li><strong>Project Manager</strong> approves tech spec.</li>
+<li><strong>Developer</strong> branches Popper source.</li>
+<li><strong>Developer</strong> builds feature.</li>
+<li><strong>Developer</strong> writes tests for critical methods.</li>
+<li><strong>Developer</strong> creates a new tag and merges back into master.</li>
+<li><strong>Developer</strong> pushes code to the staging environment.</li>
+<li><strong>Project manager</strong> tests feature by designing functional tests using <a href="http://seleniumhq.org/">Selenium</a>.</li>
+<li>When tests pass, tag is pushed to production.</li>
+<li><strong>Developer</strong> adds an entry in the popper-design/tech_spec.md file for the feature.</li>
+</ol>
+
+<h5>Bug Fixes</h5>
+
+<ol>
+<li>When a bug is reported, <strong>Project Manager</strong> replicates it in a <a href="http://seleniumhq.org/">Selenium</a> test.</li>
+<li><strong>Developer</strong> fixes bug.</li>
+<li>When tests pass, <strong>Project Manager</strong> closes bug ticket..</li>
+</ol>
+
+<h4>Github Workflow</h4>
+
+<ol>
+<li>Clone the relevant repository that you'll be working in.
+<ul><li>git clone git@github.com:Experiments/popper-<strong>Service Repository</strong>.git</li></ul></li>
+<li>Check out the development branch.
+<ul><li>git checkout --track origin/development</li></ul></li>
+<li>Checkout a new branch named after your feature.
+<ul><li>git checkout -b my_cool_feature</li></ul></li>
+<li><p>Do work!</p></li>
+<li><p>Make sure you're up to date with the latest from the remote repository.</p>
+
+<ul><li>git checkout development</li>
+<li>git pull</li></ul></li>
+<li>Roll your changes on top of the development branch.
+<ul><li>git checkout my_cool_feature</li>
+<li>git rebase -i development</li></ul></li>
+<li>Merge changes back into the development branch.
+<ul><li>git checkout development</li>
+<li>git merge my_cool_feature</li></ul></li>
+<li>Push changes to the remote repository 
+<ul><li>git push origin development</li></ul></li>
+<li>Delete your feature branch 
+<ul><li>git branch -d my_cool_feature</li></ul></li>
+</ol>
+
+<h3>Style Guidelines</h3>
+
+<h4>General Guidelines</h4>
+
+<p>All code should be written in accordance with the associated language/framework guidelines.  Most often, this will mean adhering to the <a href="https://github.com/bbatsov/rails-style-guide">Ruby on Rails style guidelines</a>, also found <a href="http://pathfindersoftware.com/2008/10/elements-of-ruby-style/">here</a>.</p>
+
+<h4><strong>Popper</strong>-specific Guidelines</h4>
+
+<h5>Configuration Variables</h5>
+
+<p>Configuration variables are stored with the Configuration class, in <strong>config/configuration.rb</strong>.</p>
+
+<p>To set a configuration variable, add the variable name in <strong>attr_accessible</strong> in <strong>config/configuration.rb</strong>, then set the variable in an initializer class for a given environment, in <strong>config/initializers/*.rb</strong>, for the desired environment.</p>
+
+<h5>Linking to External URLs</h5>
+
+<p>When linking to an external resource, such as an OAuth authentication point, avoid linking directly to the resource from the view, rather, create a path in the routes file and use the path helper.</p>
+
+<p>Like this:</p>
+
+<p><strong>match "/blog" => redirect("http://example.com/blog"), :as => :blog</strong></p>
+
+<p>Use the <strong>blog_path</strong> helper in your actions.</p>
+
+<h2><a name="PopperResearcher" id="anchor5">popper-researcher</a></h2>
+
+<h3><a name="AuthenticationAndPermissions" id="anchor5">Authentication and Permissions</a></h3>
+
+<h4>Description</h4>
+
+<p>Handles user login/creation/permissions.</p>
+
+<h4>Relevant Gems</h4>
+
+<p>cancan, authlogic, omniauth</p>
+
+<h4>Controllers</h4>
+
+<p>user<em>sessions</em>controller.rb, users<em>controller.rb, application</em>controller.rb</p>
+
+<h4>Models</h4>
+
+<p>ability.rb, user_session.rb, user.rb</p>
+
+<h4>Application Flow:</h4>
+
+<ul>
+<li><p>New User Creation: Users/New -> Users/Create</p>
+
+<ul><li>Users/New
+<ul><li>Call User.new</li>
+<li>Render Form</li></ul></li>
+<li>Parameters:
+<ul><li>First<em>name</li>
+<li>Last</em>name</li>
+<li>Email</li>
+<li>Username</li>
+<li>Password</li>
+<li>Password_Confirmation</li></ul></li>
+<li>Users/Create
+<ul><li>Call User.new(params[:user[)</li>
+<li>Check @user.valid?</li>
+<li>@user.save</li></ul></li></ul></li>
+<li><p>User Login</p>
+
+<ul><li>Saves attempted page for redirect</li>
+<li>User_sessions/new
+<ul><li>UserSession.new</li>
+<li>Render Form</li></ul></li>
+<li>User<em>Sessions/create
+<ul><li>UserSession.new(params[:user</em>session])</li>
+<li>If @user<em>session.save?
+<ul><li>Redirect to homepage or desired page</li></ul></li>
+<li>Else
+<ul><li>Renders User</em>sessions/new</li></ul></li></ul></li></ul></li>
+<li><p>User Logout</p>
+
+<ul><li>User<em>sessions/destroy
+<ul><li>@user</em>session.delete</li></ul></li></ul></li>
+</ul>
+
+<h4>Permissions</h4>
+
+<p>Permissions are handled with CanCan Gem and set in <strong>models/ability.rb</strong>.</p>
+
+<ul>
+<li>Researcher
+<ul><li>Can access Experiments Controller</li></ul></li>
+<li>Player</li>
+</ul>
+
+<h4>Notes</h4>
+
+<p>UserSession inherits from Authlogic Gem</p>
+
+<h3><a name="GitAndGithubIntegration" id="anchor5">Git and Github Integration</a></h3>
+
+<h4>Description</h4>
+
+<p>Links user to a Github account via OAuth2, adds them to the Experiments organization on Github with a personalized team, and creates a new private repository for that user</p>
+
+<h4>Relevant Gems</h4>
+
+<p>octokit, httparty</p>
+
+<h4>Controllers</h4>
+
+<p>user<em>sessions</em>controller.rb</p>
+
+<h4>Models</h4>
+
+<p>user.rb, (github.rb)</p>
+
+<h4>Application Flow</h4>
+
+<ul>
+<li>If user needs a Github Access Token
+<ul><li>Users/needs<em>github
+<ul><li>Link to Github Oauth Endpoint: github_authentication_path</li></ul></li>
+<li>User_sessions/github</em>callback
+<ul><li>Call @user.github<em>authenticate(params[:code])
+<ul><li>Call self.github</em>init(code)
+<ul><li>POST code to retrieve access token</li>
+<li>Save Github access token for user</li></ul></li>
+<li>Call self.github<em>create</em>user<em>team</li>
+<li>Call self.github<em>add</em>user<em>to</em>team</li>
+<li>Call self.github<em>create</em>organization</em>repo("#{self.username}'s New Experiment Repository")         </li></ul></li>
+<li>Handles Errors:
+<ul><li>If User authenticates with Github but can’t create a team</li>
+<li>If User has authenticated with Github but deleted team and can’t create a repo</li></ul></li></ul></li></ul></li>
+</ul>
+
+<h4>Notes</h4>
+
+<p>Need functional/unit test coverage for this feature.</p>
+
+<h3><a name="ExperimentCreation">Experiment Creation</a></h3>
+
+<h4>Description</h4>
+
+<p>Allows users to create an experiment, associate it with a github repository, create an associated trial, and deploy the repo to the Windows farm.</p>
+
+<h4>Relevant Gems</h4>
+
+<p>octokit, httparty</p>
+
+<h4>Controllers</h4>
+
+<p>experiments_controller.rb</p>
+
+<h4>Models</h4>
+
+<p>experiment.rb, user.rb, (github.rb)</p>
+
+<h4>Application Flow</h4>
+
+<ul>
+<li>Experiment Creation: Experiments/New -> Experiments/Create
+<ul><li>Experiments/New
+<ul><li>Call Experiments.new</li>
+<li>Render Form</li></ul></li>
+<li>Parameters
+<ul><li>Name</li>
+<li>Description</li></ul></li>
+<li>Experiments/Create
+<ul><li>Call Experiment.new(params[:experiment])</li>
+<li>If @experiment.save?
+<ul><li>Redirect to browse<em>repos</em>experiment<em>path</li></ul></li>
+<li>Else
+<ul><li>Render form with associated errors</li></ul></li></ul></li>
+<li>Experiments/Browse</em>repos
+<ul><li>Render list of available repos</li></ul></li>
+<li>Experiments/Deploy
+<ul><li>Call @experiment.deploy(params[:repo])</li>
+<li>If @experiment.deployed?
+<ul><li>Render success message</li></ul></li>
+<li>Else
+<ul><li>Render browse_repos with error message</li></ul></li></ul></li></ul></li>
+</ul>
+
+<h4>Critical Methods</h4>
+
+<ul>
+<li>Experiment.rb:deploy
+<ul><li>Sets deployed_at time to current timestamp</li>
+<li>Creates a new Thread and posts a request to Sinatra service that handles repository cloning and upload
+<ul><li>Eventually need to just clone the repository to S3, where it’s accessible by the windows server.  Alternatively might use EventMachine or Node.js for greater efficiency.</li></ul></li>
+<li>Returns true or false depending on deployment status</li></ul></li>
+</ul>
+
+<h4>Notes</h4>
+
+<p>Need to better develop error handling for the asynchronous request to the sinatra server.</p>
+
+<h2><a name="PopperDeploy">popper-deploy</a></h2>
+
+<h3>Trial Creation</h3>
+
+<h4>Description</h4>
+
+<p>Clones a git repository from Experiments organization using Admin credentials and uploads it to the photon server.  </p>
+
+<h4>Relevant Gems</h4>
+
+<p>sinatra, net/ftp, httparty, octokit</p>
+
+<h4>Routes</h4>
+
+<p>GET /deploy (:username, :repo)</p>
+
+<h4>Application Flow</h4>
+
+<ul>
+<li>Receives Request
+<ul><li>Calls:
+<ul><li>system "git clone git@github.com:Experiments/#{params[:repo]}"</li></ul></li>
+<li>Tars the binaries folder (/binaries/) in the repository for SFTP transfer:
+<ul><li>system "tar -cvf #{params[:repo]}/binaries/masterclient.tar #{params[:repo]}/binaries/masterclient.zip"</li>
+<li>Tarring preserves the directory structure, so when extracting programmatically, /binaries/ will be nested in two other folders.</li></ul></li>
+<li>Uses Net/FTP to upload tarred binaries.</li>
+<li>Makes a request to the Sinatra app located on the windows server to start the masterclient.exe file.  </li></ul></li>
+</ul>
+
+<h2><a name="PopperWindowsDeploy">popper-windows-deploy</a></h2>
+
+<h3>Deploy Masterclient</h3>
+
+<h4>Description</h4>
+
+<p>Handles moving source files into an instance folder and starting the masterclient.</p>
+
+<h4>Relevant Gems</h4>
+
+<p>sinatra, 7zip, filezilla</p>
+
+<h4>Routes</h4>
+
+<p>POST /new (:instance, :id, :args)</p>
+
+<h4>Application Flow</h4>
+
+<ul>
+<li>Receives Request
+<ul><li>Extracts tar file in /library (where it was uploaded by the Sinatra app)</li>
+<li>Extracts zipped binaries</li>
+<li>Copies executable and webplayer to new instance folder</li>
+<li>Calls 
+<ul><li>system("start masterclient.exe #{params[:args]}")</li></ul></li></ul></li>
+</ul>
+
